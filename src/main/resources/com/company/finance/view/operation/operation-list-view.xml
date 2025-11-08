@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
+      title="msg://operationListView.title"
+      focusComponent="operationsDataGrid">
+    <data>
+        <collection id="operationsDc"
+                    class="com.company.finance.entity.Operation">
+            <fetchPlan>
+                <property name="wallet" fetchPlan="_base"/>
+                <property name="category" fetchPlan="_base"/>
+                <property name="amount"/>
+                <property name="date"/>
+                <property name="type"/>
+            </fetchPlan>
+            <loader id="operationsDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from Operation e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters>
+            <genericFilter component="genericFilter"/>
+            <pagination component="pagination"/>
+        </urlQueryParameters>
+    </facets>
+    <actions>
+        <action id="selectAction" type="lookup_select"/>
+        <action id="discardAction" type="lookup_discard"/>
+    </actions>
+    <layout>
+        <genericFilter id="genericFilter"
+                       dataLoader="operationsDl">
+            <properties include=".*"/>
+        </genericFilter>
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <startSlot>
+                <button id="createButton" action="operationsDataGrid.createAction"/>
+                <button id="editButton" action="operationsDataGrid.editAction"/>
+                <button id="removeButton" action="operationsDataGrid.removeAction"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="operationsDl"/>
+            </endSlot>
+        </hbox>
+        <dataGrid id="operationsDataGrid"
+                  width="100%"
+                  minHeight="20em"
+                  dataContainer="operationsDc"
+                  columnReorderingAllowed="true">
+            <actions>
+                <action id="createAction" type="list_create"/>
+                <action id="editAction" type="list_edit"/>
+                <action id="removeAction" type="list_remove"/>
+            </actions>
+            <columns resizable="true">
+                <column property="wallet"/>
+                <column property="category"/>
+                <column property="type" header="Тип операции"/>
+                <column property="amount"/>
+                <column property="date"/>
+            </columns>
+        </dataGrid>
+        <hbox id="lookupActions" visible="false">
+            <button id="selectButton" action="selectAction"/>
+            <button id="discardButton" action="discardAction"/>
+        </hbox>
+    </layout>
+</view>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://walletDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="walletDc"
+                  class="com.company.finance.entity.Wallet">
+            <fetchPlan extends="_base"/>
+            <loader id="walletDl"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveCloseAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="walletDc">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+                <responsiveStep minWidth="40em" columns="2"/>
+            </responsiveSteps>
+            <textField id="nameField" property="name"/>
+            <textArea id="commentField" property="comment"/>
+            <textField id="idField" property="id" readOnly="true">
+                <suffix>
+                    <button id="copyIdButton" icon="CLIPBOARD_TEXT" themeNames="tertiary-inline" enabled="true"/>
+                </suffix>
+            </textField>
+            <textField id="amountField" property="amount"/>
+        </formLayout>
+        <hbox id="detailActions">
+            <button id="saveAndCloseButton" action="saveCloseAction"/>
+            <button id="closeButton" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

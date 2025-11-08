@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://jmix.io/schema/flowui/menu">
+
+    <menu id="application" title="msg://com.company.finance/menu.application.title" opened="true">
+        <item view="User.list" title="msg://com.company.finance.view.user/UserListView.title"/>
+        <item view="Category.list" title="msg://com.company.finance.view.category/categoryListView.title"/>
+        <item view="Transfer.list" title="msg://com.company.finance.view.transfer/transferListView.title"/>
+        <item view="Wallet.list" title="msg://com.company.finance.view.wallet/walletListView.title"/>
+        <item view="Operation.list" title="msg://com.company.finance.view.operation/operationListView.title"/>
+    </menu>
+
+</menu-config>

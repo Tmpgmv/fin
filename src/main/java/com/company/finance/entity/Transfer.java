@@ -1,0 +1,68 @@
+package com.company.finance.entity;
+
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+@JmixEntity
+@Table(name = "TRANSFER", indexes = {
+        @Index(name = "IDX_TRANSFER_FROM", columnList = "FROM_ID"),
+        @Index(name = "IDX_TRANSFER_TO", columnList = "TO_")
+})
+@Entity
+public class Transfer {
+    @JmixGeneratedValue
+    @Column(name = "ID", nullable = false)
+    @Id
+    private UUID id;
+
+    @JoinColumn(name = "FROM_ID", nullable = false)
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private Wallet from;
+
+    @Column(name = "TO_", nullable = false)
+    @NotNull
+    private UUID to;
+
+    @Column(name = "AMOUNT", nullable = false, precision = 19, scale = 2)
+    @NotNull
+    private BigDecimal amount;
+
+    public void setTo(UUID to) {
+        this.to = to;
+    }
+
+    public UUID getTo() {
+        return to;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public Wallet getFrom() {
+        return from;
+    }
+
+    public void setFrom(Wallet from) {
+        this.from = from;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+}
