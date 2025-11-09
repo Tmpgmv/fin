@@ -72,11 +72,11 @@
             <h2 id="totalExpense"/>
             <h3 text="Расходы по категориям:"/>
 
-            <dataGrid id="catDataGrid" dataContainer="catExpenseDc" width="100%">
+            <dataGrid id="catExpenseDataGrid" dataContainer="catExpenseDc" width="100%">
                 <columns>
                     <column property="category"/>
                     <column property="amount"/>
-                    <column property="leftover"/>
+                    <column property="leftover" key="leftover"/>
                 </columns>
             </dataGrid>
 

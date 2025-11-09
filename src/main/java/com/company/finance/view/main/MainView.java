@@ -15,6 +15,8 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.Messages;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
@@ -60,6 +62,9 @@ public class MainView extends StandardMainView {
 
     @ViewComponent
     private CollectionContainer<CategoryGridData> catExpenseDc;
+
+    @ViewComponent
+    private DataGrid catExpenseDataGrid;
 
     @Install(to = "userMenu", subject = "buttonRenderer")
     private Component userMenuButtonRenderer(final UserDetails userDetails) {
@@ -162,5 +167,20 @@ public class MainView extends StandardMainView {
         totalIncome.setText(String.format("Общий доход: %s", totalInc));
         List<CategoryGridData> categoriesIncome = categoryService.getCategories(OperationType.ПРИХОД);
         catIncomeDc.setItems(categoriesIncome);
+
+
+    }
+
+    @Supply(to = "catExpenseDataGrid.leftover", subject = "renderer")
+    protected Renderer<CategoryGridData> limitColumnRenderer() {
+        return new ComponentRenderer<>(categoryGridData -> {
+            Span span = uiComponents.create(Span.class);
+            if (categoryGridData.getLeftover() != null && categoryGridData.getLeftover().compareTo(BigDecimal.ZERO) != 0) {
+                span.setText(categoryGridData.getLeftover().toPlainString());
+            } else {
+                span.setText(""); // leave empty if limit is zero
+            }
+            return span;
+        });
     }
 }
