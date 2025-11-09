@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <mainView xmlns="http://jmix.io/schema/flowui/main-view"
           title="msg://MainView.title">
+    <data>
+        <collection id="catIncomeDc" class="com.company.finance.entity.CategoryGridData"/>
+        <collection id="catExpenseDc" class="com.company.finance.entity.CategoryGridData"/>
+    </data>
+    <facets>
+    </facets>
     <actions>
         <action id="logoutAction" text="msg:///actions.logout.text" type="logout"/>
     </actions>
@@ -51,10 +57,34 @@
                 <image resource="public/images/logo.png"
                        classNames="jmix-initial-layout-logo"/>
             </div>
+
+            <h2 id="totalIncome"/>
+            <h3 text="Доходы по категориям:"/>
+
+            <dataGrid id="catIncomeDataGrid" dataContainer="catIncomeDc" width="100%">
+                <columns>
+                    <column property="category"/>
+                    <column property="amount"/>
+                </columns>
+            </dataGrid>
+
+
+            <h2 id="totalExpense"/>
+            <h3 text="Расходы по категориям:"/>
+
+            <dataGrid id="catDataGrid" dataContainer="catExpenseDc" width="100%">
+                <columns>
+                    <column property="category"/>
+                    <column property="amount"/>
+                    <column property="leftover"/>
+                </columns>
+            </dataGrid>
+
             <!--
                 This is the work area - central part of the view.
                 Put your components here.
             -->
+
         </initialLayout>
     </appLayout>
 </mainView>

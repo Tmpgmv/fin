@@ -30,10 +30,14 @@ public interface UserRole {
     void wallet();
 
     @MenuPolicy(menuIds = {"Category.list", "Transfer.list", "Wallet.list", "Operation.list"})
-    @ViewPolicy(viewIds = {"Category.list", "Transfer.list", "Wallet.list", "Operation.list", "Wallet.detail", "Transfer.detail", "Operation.detail", "Category.detail"})
+    @ViewPolicy(viewIds = {"Category.list", "Transfer.list", "Wallet.list", "Operation.list", "Wallet.detail", "Transfer.detail", "Operation.detail", "Category.detail", "MainView"})
     void screens();
 
     @EntityAttributePolicy(entityClass = User.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
     @EntityPolicy(entityClass = User.class, actions = EntityPolicyAction.READ)
     void user();
+
+    @EntityAttributePolicy(entityClass = CategoryGridData.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    @EntityPolicy(entityClass = CategoryGridData.class, actions = EntityPolicyAction.ALL)
+    void categoryGridData();
 }

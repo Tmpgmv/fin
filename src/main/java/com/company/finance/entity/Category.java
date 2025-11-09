@@ -1,6 +1,8 @@
 package com.company.finance.entity;
 
+import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
@@ -16,6 +18,8 @@ import java.util.UUID;
 @JmixEntity
 @Table(name = "CATEGORY", indexes = {
         @Index(name = "IDX_CATEGORY_USER", columnList = "USER_ID")
+}, uniqueConstraints = {
+        @UniqueConstraint(name = "IDX_CATEGORY_UNQ_USER_NAME", columnNames = {"USER_ID", "NAME", "TYPE_"})
 })
 @Entity
 public class Category {
@@ -34,7 +38,6 @@ public class Category {
 
     @NotBlank
     @NotEmpty
-    @InstanceName
     @Column(name = "NAME", nullable = false)
     @NotNull
     private String name;
@@ -62,7 +65,7 @@ public class Category {
     }
 
     public BigDecimal getLimit() {
-        return limit;
+        return limit == null ? new BigDecimal(0) : limit;
     }
 
     public void setLimit(BigDecimal limit) {
@@ -85,4 +88,9 @@ public class Category {
         this.id = id;
     }
 
+    @InstanceName
+    @DependsOnProperties({"name"})
+    public String getInstanceName(MetadataTools metadataTools) {
+        return metadataTools.format(name);
+    }
 }

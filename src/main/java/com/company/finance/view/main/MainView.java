@@ -1,23 +1,35 @@
 package com.company.finance.view.main;
 
+import com.company.finance.entity.CategoryGridData;
+import com.company.finance.entity.Operation;
+import com.company.finance.entity.OperationType;
 import com.company.finance.entity.User;
+import com.company.finance.service.CategoryService;
+import com.company.finance.service.OperationService;
 import com.company.finance.service.WalletService;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.avatar.AvatarVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.Messages;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.app.main.StandardMainView;
-import io.jmix.flowui.view.Install;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
+import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.DataLoader;
+import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
+
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Route("")
 @ViewController(id = "MainView")
@@ -30,6 +42,24 @@ public class MainView extends StandardMainView {
     private UiComponents uiComponents;
     @Autowired
     private CurrentUserSubstitution currentUserSubstitution;
+
+    @Autowired
+    private OperationService operationService;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @ViewComponent
+    private H2 totalIncome;
+
+    @ViewComponent
+    private H2 totalExpense;
+
+    @ViewComponent
+    private CollectionContainer<CategoryGridData> catIncomeDc;
+
+    @ViewComponent
+    private CollectionContainer<CategoryGridData> catExpenseDc;
 
     @Install(to = "userMenu", subject = "buttonRenderer")
     private Component userMenuButtonRenderer(final UserDetails userDetails) {
@@ -116,4 +146,22 @@ public class MainView extends StandardMainView {
         UserDetails authenticatedUser = currentUserSubstitution.getAuthenticatedUser();
         return user != null && !authenticatedUser.getUsername().equals(user.getUsername());
     }
+
+
+    
+    
+    @Subscribe
+    public void onInit(final InitEvent event) {
+        BigDecimal totalExp = operationService.geTotal(OperationType.РАСХОД);
+        totalExpense.setText(String.format("Общие расходы: %s", totalExp));
+        List<CategoryGridData> categoriesExpense = categoryService.getCategories(OperationType.РАСХОД);
+        catExpenseDc.setItems(categoriesExpense);
+
+
+        BigDecimal totalInc = operationService.geTotal(OperationType.ПРИХОД);
+        totalIncome.setText(String.format("Общий доход: %s", totalInc));
+        List<CategoryGridData> categoriesIncome = categoryService.getCategories(OperationType.ПРИХОД);
+        catIncomeDc.setItems(categoriesIncome);
+    }
+    
 }

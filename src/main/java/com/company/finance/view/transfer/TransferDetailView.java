@@ -132,26 +132,6 @@ public class TransferDetailView extends StandardDetailView<Transfer> {
 
     @Subscribe
     public void onBeforeSave(BeforeSaveEvent event) {
-//        String toWalletUuidOrCode = toField.getValue();
-
-//        // Например, если пользователь вводит UUID
-//        Optional<Wallet> walletOpt = dataManager.load(Wallet.class)
-//                .id(UUID.fromString(toWalletUuidOrCode))
-//                .optional();
-//
-//        if (walletOpt.isEmpty()) {
-//            event.preventSave(); // Прервать сохранение
-//            notifications.show("Кошелек не найден: " + toWalletUuidOrCode);
-//            return;
-//        }
-
-//        Wallet wallet = walletOpt.get();
-//        if (wallet.equals(getEditedEntity().getFrom())) {
-//            event.preventSave();
-//            notifications.show("Нельзя переводить на тот же кошелек");
-//            return;
-//        }
-
         getEditedEntity().setTo(toWallet);
     }
 
