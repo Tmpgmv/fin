@@ -163,5 +163,4 @@ public class MainView extends StandardMainView {
         List<CategoryGridData> categoriesIncome = categoryService.getCategories(OperationType.ПРИХОД);
         catIncomeDc.setItems(categoriesIncome);
     }
-    
 }
