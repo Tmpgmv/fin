@@ -1,23 +1,20 @@
 package com.company.finance.entity;
 
-import com.company.finance.service.WalletService;
-import io.jmix.core.DataManager;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.metamodel.annotation.JmixProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.CreatedBy;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "WALLET")
+@Table(name = "WALLET", indexes = {
+        @Index(name = "IDX_WALLET_", columnList = "")
+})
 @Entity
 public class Wallet {
     @JmixGeneratedValue
@@ -25,7 +22,11 @@ public class Wallet {
     @Id
     private UUID id;
 
-
+    @CreatedBy
+    @JoinColumn(name = "USER_ID", nullable = false)
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private User user;
 
     @NotEmpty
     @NotBlank
@@ -37,6 +38,14 @@ public class Wallet {
     @Column(name = "COMMENT_")
     @Lob
     private String comment;
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
 
     public String getComment() {
         return comment;

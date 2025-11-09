@@ -30,7 +30,7 @@
                     <action id="entityClearAction" type="entity_clear"/>
                 </actions>
             </entityPicker>
-            <textField id="toField" property="to"/>
+            <textField id="toField"/>
             <textField id="amountField" property="amount"/>
         </formLayout>
         <hbox id="detailActions">

@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.springframework.data.annotation.CreatedBy;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -38,6 +39,7 @@ public class Category {
     @NotNull
     private String name;
 
+    @CreatedBy
     @JoinColumn(name = "USER_ID", nullable = false)
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

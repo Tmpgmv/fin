@@ -1,9 +1,6 @@
 package com.company.finance.security;
 
-import com.company.finance.entity.Category;
-import com.company.finance.entity.Operation;
-import com.company.finance.entity.Transfer;
-import com.company.finance.entity.Wallet;
+import com.company.finance.entity.*;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
@@ -33,6 +30,10 @@ public interface UserRole {
     void wallet();
 
     @MenuPolicy(menuIds = {"Category.list", "Transfer.list", "Wallet.list", "Operation.list"})
-    @ViewPolicy(viewIds = {"Category.list", "Transfer.list", "Wallet.list", "Operation.list"})
+    @ViewPolicy(viewIds = {"Category.list", "Transfer.list", "Wallet.list", "Operation.list", "Wallet.detail", "Transfer.detail", "Operation.detail", "Category.detail"})
     void screens();
+
+    @EntityAttributePolicy(entityClass = User.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    @EntityPolicy(entityClass = User.class, actions = EntityPolicyAction.READ)
+    void user();
 }

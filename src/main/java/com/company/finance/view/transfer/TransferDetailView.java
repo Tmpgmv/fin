@@ -2,17 +2,23 @@ package com.company.finance.view.transfer;
 
 import com.company.finance.entity.*;
 import com.company.finance.view.main.MainView;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.view.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.awt.*;
+
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,21 +31,40 @@ public class TransferDetailView extends StandardDetailView<Transfer> {
     @Autowired
     private DataManager dataManager;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @ViewComponent
     private EntityPicker fromField;
 
     @ViewComponent
     private TextField amountField;
 
+    @ViewComponent
+    private TextField toField;
+
     @Autowired
     private Metadata metadata;
 
     private Wallet toWallet;
 
+    @Autowired
+    private Notifications notifications;
+
     @Install(to = "toField", subject = "validator")
-    private void toFieldValidator(final UUID uuid) {
-        Optional<Wallet> wallet = dataManager.load(Wallet.class).id(uuid)
-                .optional();
+    private void toFieldValidator(String uuid) {
+        uuid = uuid.strip();
+        if (uuid.isEmpty()){
+            throw new ValidationException("Заполните это поле.");
+        }
+        UUID id;
+        try{
+            id = UUID.fromString(uuid);
+        } catch (IllegalArgumentException e){
+            throw new ValidationException("Такого кошелька нет: " + uuid);
+        }
+
+        Optional<Wallet> wallet = getWallet(id);
 
         if (wallet.isEmpty()){
             throw new ValidationException("Такого кошелька нет: " + uuid);
@@ -52,6 +77,17 @@ public class TransferDetailView extends StandardDetailView<Transfer> {
         }
     }
 
+
+
+    public Optional<Wallet> getWallet(UUID id) {
+        String sql = "select * from wallet where id = ?1";
+        List<Wallet> result = entityManager
+                .createNativeQuery(sql, Wallet.class)
+                .setParameter(1, id)
+                .setMaxResults(1)
+                .getResultList();
+        return result.stream().findFirst();
+    }
 
     @Subscribe
     public void onAfterSave(final AfterSaveEvent event) {
@@ -93,4 +129,30 @@ public class TransferDetailView extends StandardDetailView<Transfer> {
         ).one();
         return category;
     }
+
+    @Subscribe
+    public void onBeforeSave(BeforeSaveEvent event) {
+//        String toWalletUuidOrCode = toField.getValue();
+
+//        // Например, если пользователь вводит UUID
+//        Optional<Wallet> walletOpt = dataManager.load(Wallet.class)
+//                .id(UUID.fromString(toWalletUuidOrCode))
+//                .optional();
+//
+//        if (walletOpt.isEmpty()) {
+//            event.preventSave(); // Прервать сохранение
+//            notifications.show("Кошелек не найден: " + toWalletUuidOrCode);
+//            return;
+//        }
+
+//        Wallet wallet = walletOpt.get();
+//        if (wallet.equals(getEditedEntity().getFrom())) {
+//            event.preventSave();
+//            notifications.show("Нельзя переводить на тот же кошелек");
+//            return;
+//        }
+
+        getEditedEntity().setTo(toWallet);
+    }
+
 }
