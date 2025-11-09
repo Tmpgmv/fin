@@ -17,7 +17,8 @@ import java.util.UUID;
 @JmixEntity
 @Table(name = "OPERATION", indexes = {
         @Index(name = "IDX_OPERATION_WALLET", columnList = "WALLET_ID"),
-        @Index(name = "IDX_OPERATION_CATEGORY", columnList = "CATEGORY_ID")
+        @Index(name = "IDX_OPERATION_CATEGORY", columnList = "CATEGORY_ID"),
+        @Index(name = "IDX_OPERATION_USER", columnList = "USER_ID")
 })
 @Entity
 public class Operation {
@@ -25,6 +26,11 @@ public class Operation {
     @Column(name = "ID", nullable = false)
     @Id
     private UUID id;
+
+    @JoinColumn(name = "USER_ID", nullable = false)
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private User user;
 
     @JoinColumn(name = "WALLET_ID", nullable = false)
     @NotNull
@@ -54,16 +60,21 @@ public class Operation {
     @Column(name = "COMMENT_")
     private String comment;
 
-//    @Column(name = "TYPE")
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    //    @Column(name = "TYPE")
     @JmixProperty
     @DependsOnProperties({"category"})
     public OperationType getType() {
         return category.getType();
     }
 
-//    public void setType(OperationType type) {
-//        this.type = type == null ? null : type.getId();
-//    }
 
     public Date getDate() {
         return date;

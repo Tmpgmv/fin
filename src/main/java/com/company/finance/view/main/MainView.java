@@ -1,6 +1,7 @@
 package com.company.finance.view.main;
 
 import com.company.finance.entity.User;
+import com.company.finance.service.WalletService;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.avatar.Avatar;

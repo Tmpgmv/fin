@@ -29,7 +29,7 @@
                     <button id="copyIdButton" icon="CLIPBOARD_TEXT" themeNames="tertiary-inline" enabled="true"/>
                 </suffix>
             </textField>
-            <textField id="amountField" property="amount"/>
+            <textField id="amountField"/>
         </formLayout>
         <hbox id="detailActions">
             <button id="saveAndCloseButton" action="saveCloseAction"/>

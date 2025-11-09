@@ -3,10 +3,7 @@ package com.company.finance.entity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +13,9 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "CATEGORY")
+@Table(name = "CATEGORY", indexes = {
+        @Index(name = "IDX_CATEGORY_USER", columnList = "USER_ID")
+})
 @Entity
 public class Category {
     @JmixGeneratedValue
@@ -38,6 +37,19 @@ public class Category {
     @Column(name = "NAME", nullable = false)
     @NotNull
     private String name;
+
+    @JoinColumn(name = "USER_ID", nullable = false)
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public OperationType getType() {
         return type == null ? null : OperationType.fromId(type);

@@ -52,37 +52,13 @@ public class TransferDetailView extends StandardDetailView<Transfer> {
         }
     }
 
-    @Install(to = "amountField", subject = "validator")
-    private void amountFieldValidator(final BigDecimal value) {
-        if (fromField.isEmpty() || fromField.isInvalid())
-        {
-            return; // Нет смысла проверять, поа не выбран кошелек.
-            //throw new ValidationException("Выберите кошельек");
-        }
-
-
-
-        if (getEditedEntity().getFrom().getAmount().compareTo(value)<0)
-        {
-            throw new ValidationException("Не хватает средств для перевода.");
-        }
-    }
 
     @Subscribe
     public void onAfterSave(final AfterSaveEvent event) {
         createOperation(OperationType.ПРИХОД);
         createOperation(OperationType.РАСХОД);
-        decreaseAmountInWallet();
-        increaseAmountInWallet();
     }
 
-    private void increaseAmountInWallet() {
-        toWallet.setAmount(toWallet.getAmount().add(getEditedEntity().getAmount()));
-    }
-
-    private void decreaseAmountInWallet() {
-        toWallet.setAmount(getEditedEntity().getFrom().getAmount().subtract(getEditedEntity().getAmount()));
-    }
 
     private void createOperation(OperationType type) {
         Category category = getCategory(type);
@@ -95,11 +71,11 @@ public class TransferDetailView extends StandardDetailView<Transfer> {
         String text = "";
         if (type == OperationType.ПРИХОД){
             text = "Поступление от ";
-            wallet = getEditedEntity().getFrom();
+            wallet = toWallet;
         } else {
             Assert.isTrue(type == OperationType.РАСХОД, "Должен быть расход");
             text = "Перевод на кошелек";
-            wallet = toWallet;
+            wallet = getEditedEntity().getFrom();
         }
 
         operation.setWallet(wallet);
