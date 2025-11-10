@@ -8,6 +8,7 @@ import com.company.finance.service.CategoryService;
 import com.company.finance.service.OperationService;
 import com.company.finance.service.WalletService;
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.avatar.AvatarVariant;
@@ -22,6 +23,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.app.main.StandardMainView;
+import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.DataLoader;
@@ -31,6 +33,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Route("")
@@ -182,5 +185,15 @@ public class MainView extends StandardMainView {
             }
             return span;
         });
+    }
+
+    @Subscribe("from")
+    public void onFromComponentValueChange(final AbstractField.ComponentValueChangeEvent<TypedDatePicker<Comparable>, Comparable> event) {
+        LocalDate localDate = (LocalDate)event.getValue();
+    }
+
+    @Subscribe("through")
+    public void onThroughComponentValueChange(final AbstractField.ComponentValueChangeEvent<TypedDatePicker<Comparable>, Comparable> event) {
+        LocalDate localDate = (LocalDate)event.getValue();
     }
 }
