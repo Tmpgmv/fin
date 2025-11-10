@@ -51,12 +51,26 @@
             </section>
         </drawerLayout>
         <initialLayout id="initialLayout" classNames="jmix-initial-layout">
+
+
             <div classNames="jmix-initial-layout-content">
                 <h1 text="msg://applicationTitle.text"
                     classNames="jmix-initial-layout-title"/>
                 <image resource="public/images/logo.png"
                        classNames="jmix-initial-layout-logo"/>
             </div>
+
+
+            <hbox>
+                <span text="С: "/>
+                <datePicker id="from"/>
+            </hbox>
+            <hbox>
+                <span text="По: "/>
+                <datePicker id="through"/>
+            </hbox>
+
+
 
             <h2 id="totalIncome"/>
             <h3 text="Доходы по категориям:"/>
