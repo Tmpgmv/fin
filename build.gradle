@@ -65,3 +65,11 @@ idea {
 vaadin {
     optimizeBundle = false
 }
+
+test {
+    def testCount = 0
+    afterTest { descriptor, result ->
+        testCount++
+        println "${testCount}. Test ${descriptor.name} - ${result.resultType}"
+    }
+}

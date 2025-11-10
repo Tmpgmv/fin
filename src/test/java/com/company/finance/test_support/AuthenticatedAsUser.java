@@ -1,24 +1,16 @@
 package com.company.finance.test_support;
 
-import com.company.finance.entity.Category;
-import com.company.finance.entity.User;
-import io.jmix.core.DataManager;
-import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.security.SystemAuthenticator;
-import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.util.Assert;
 
-public class AuthenticatedAsAdmin implements BeforeEachCallback, AfterEachCallback {
+public class AuthenticatedAsUser implements BeforeEachCallback, AfterEachCallback {
     @Override
     public void beforeEach(ExtensionContext context) {
-        getSystemAuthenticator(context).begin("admin");
+        getSystemAuthenticator(context).begin("user"); // authenticate as 'user'
     }
 
     @Override
