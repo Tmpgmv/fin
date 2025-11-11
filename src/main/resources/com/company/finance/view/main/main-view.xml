@@ -35,7 +35,7 @@
             </header>
         </navigationBar>
         <drawerLayout>
-            <section id="section" classNames="jmix-main-view-section">
+            <section id="section" classNames="jmix-main-view-section" minHeight="200px">
                 <h2 id="applicationTitle"
                     classNames="jmix-main-view-application-title">
                     <anchor id="baseLink"
@@ -63,11 +63,11 @@
 
             <hbox>
                 <span text="С: "/>
-                <datePicker id="from"/>
+                <datePicker id="fromComponent"/>
             </hbox>
             <hbox>
                 <span text="По: "/>
-                <datePicker id="through"/>
+                <datePicker id="throughComponent"/>
             </hbox>
 
 
@@ -75,7 +75,7 @@
             <h2 id="totalIncome"/>
             <h3 text="Доходы по категориям:"/>
 
-            <dataGrid id="catIncomeDataGrid" dataContainer="catIncomeDc" width="100%">
+            <dataGrid id="catIncomeDataGrid" dataContainer="catIncomeDc" width="100%" minHeight="200px">
                 <columns>
                     <column property="category"/>
                     <column property="amount"/>
@@ -86,7 +86,7 @@
             <h2 id="totalExpense"/>
             <h3 text="Расходы по категориям:"/>
 
-            <dataGrid id="catExpenseDataGrid" dataContainer="catExpenseDc" width="100%">
+            <dataGrid id="catExpenseDataGrid" dataContainer="catExpenseDc" width="100%" minHeight="200px">
                 <columns>
                     <column property="category"/>
                     <column property="amount"/>

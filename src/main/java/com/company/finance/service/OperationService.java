@@ -3,24 +3,41 @@ package com.company.finance.service;
 import com.company.finance.entity.Operation;
 import com.company.finance.entity.OperationType;
 import io.jmix.core.DataManager;
+import io.jmix.core.FluentValueLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+
 
 @Service
 public class OperationService {
     @Autowired
     private DataManager dataManager;
 
-    public BigDecimal geTotal(OperationType type){
-        BigDecimal total = dataManager.loadValue(
-                        "select coalesce(sum(o.amount), 0) from Operation o where o.category.type = :type",
-                        BigDecimal.class)
-                .parameter("type", type)
-                .one();
+    public BigDecimal geTotal(OperationType type, LocalDate from, LocalDate through) {
+        StringBuilder query = new StringBuilder(
+                "select coalesce(sum(o.amount), 0) from Operation o where o.category.type = :type"
+        );
+        if (from != null && through != null) {
+            query.append(" and o.date >= :from and o.date <= :through");
+        } else if (from != null) {
+            query.append(" and o.date >= :from");
+        } else if (through != null) {
+            query.append(" and o.date <= :through");
+        }
 
-        return total;
+        var total = dataManager.loadValue(query.toString(), BigDecimal.class)
+                .parameter("type", type);
+        if (from != null) {
+            total.parameter("from", from);
+        }
+        if (through != null) {
+            total.parameter("through", through);
+        }
+
+        return total.one();
     }
 
 }

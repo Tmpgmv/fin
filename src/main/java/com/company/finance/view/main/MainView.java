@@ -12,6 +12,7 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.avatar.AvatarVariant;
+import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
@@ -25,6 +26,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.app.main.StandardMainView;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.view.*;
@@ -33,7 +35,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @Route("")
@@ -68,6 +73,12 @@ public class MainView extends StandardMainView {
 
     @ViewComponent
     private DataGrid catExpenseDataGrid;
+
+    @ViewComponent
+    private TypedDatePicker fromComponent;
+
+    @ViewComponent
+    private TypedDatePicker throughComponent;
 
     @Install(to = "userMenu", subject = "buttonRenderer")
     private Component userMenuButtonRenderer(final UserDetails userDetails) {
@@ -160,18 +171,20 @@ public class MainView extends StandardMainView {
     
     @Subscribe
     public void onInit(final InitEvent event) {
-        BigDecimal totalExp = operationService.geTotal(OperationType.РАСХОД);
+        showReport(null, null);
+    }
+
+    private void showReport(LocalDate from, LocalDate through) {
+        BigDecimal totalExp = operationService.geTotal(OperationType.РАСХОД, from, through);
         totalExpense.setText(String.format("Общие расходы: %s", totalExp));
-        List<CategoryGridData> categoriesExpense = categoryService.getCategories(OperationType.РАСХОД);
+        List<CategoryGridData> categoriesExpense = categoryService.getCategories(OperationType.РАСХОД, from, through);
         catExpenseDc.setItems(categoriesExpense);
 
 
-        BigDecimal totalInc = operationService.geTotal(OperationType.ПРИХОД);
+        BigDecimal totalInc = operationService.geTotal(OperationType.ПРИХОД, from, through);
         totalIncome.setText(String.format("Общий доход: %s", totalInc));
-        List<CategoryGridData> categoriesIncome = categoryService.getCategories(OperationType.ПРИХОД);
+        List<CategoryGridData> categoriesIncome = categoryService.getCategories(OperationType.ПРИХОД, from, through);
         catIncomeDc.setItems(categoriesIncome);
-
-
     }
 
     @Supply(to = "catExpenseDataGrid.leftover", subject = "renderer")
@@ -187,13 +200,36 @@ public class MainView extends StandardMainView {
         });
     }
 
-    @Subscribe("from")
+    @Subscribe("fromComponent")
     public void onFromComponentValueChange(final AbstractField.ComponentValueChangeEvent<TypedDatePicker<Comparable>, Comparable> event) {
-        LocalDate localDate = (LocalDate)event.getValue();
+        LocalDate from = (LocalDate) event.getValue();
+
+
+        showReport(from, (LocalDate)throughComponent.getValue());
     }
 
-    @Subscribe("through")
+    @Subscribe("throughComponent")
     public void onThroughComponentValueChange(final AbstractField.ComponentValueChangeEvent<TypedDatePicker<Comparable>, Comparable> event) {
-        LocalDate localDate = (LocalDate)event.getValue();
+        LocalDate through = (LocalDate)event.getValue();
+
+        showReport((LocalDate)fromComponent.getValue(), through);
+
+    }
+
+    @Install(to = "throughComponent", subject = "validator")
+    private void throughComponentValidator(final Comparable value) {
+        LocalDate from = (LocalDate)fromComponent.getValue();
+
+        if (from == null) {
+            return;
+        }
+
+        Date val = (Date)value;
+        LocalDate through = Instant.ofEpochMilli(val.getTime())
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+        if (through.isBefore(from)){
+            throw new ValidationException("Не может быть раньше, чем \"С\"");
+        }
     }
 }

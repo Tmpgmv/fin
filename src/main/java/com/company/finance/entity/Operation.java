@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Positive;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @JmixEntity
@@ -46,13 +46,20 @@ public class Operation {
     private String description;
 
     @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DATE_")
-    private Date date;
+    private LocalDate date;
 
     @Lob
     @Column(name = "COMMENT_")
     private String comment;
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
 
     //    @Column(name = "TYPE")
     @JmixProperty
@@ -61,14 +68,6 @@ public class Operation {
         return category.getType();
     }
 
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
 
     public String getComment() {
         return comment;
