@@ -10,7 +10,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
@@ -22,41 +21,36 @@ import org.springframework.beans.factory.annotation.Autowired;
 @EditedEntityContainer("walletDc")
 public class WalletDetailView extends StandardDetailView<Wallet> {
 
+  @ViewComponent private TextField idField;
 
-    @ViewComponent
-    private TextField idField;
+  @ViewComponent private TextField amount;
 
-    @ViewComponent
-    private TextField amount;
+  @Autowired private Notifications notifications;
 
-    @Autowired
-    private Notifications notifications;
+  @Autowired private WalletService walletService;
+  @ViewComponent private TypedTextField<Object> amountField;
 
+  @Subscribe(id = "copyIdButton", subject = "clickListener")
+  public void onCopyIdButtonClick(final ClickEvent<JmixButton> event) {
+    String id = idField.getValue();
+    UiComponentUtils.copyToClipboard(id)
+        .then(
+            successResult ->
+                notifications
+                    .create("Номер кошелька скопирован!")
+                    .withPosition(Notification.Position.BOTTOM_END)
+                    .withThemeVariant(NotificationVariant.LUMO_SUCCESS)
+                    .show(),
+            errorResult ->
+                notifications
+                    .create("Не удалось скопировать!")
+                    .withPosition(Notification.Position.BOTTOM_END)
+                    .withThemeVariant(NotificationVariant.LUMO_ERROR)
+                    .show());
+  }
 
-    @Autowired
-    private WalletService walletService;
-    @ViewComponent
-    private TypedTextField<Object> amountField;
-
-    @Subscribe(id = "copyIdButton", subject = "clickListener")
-    public void onCopyIdButtonClick(final ClickEvent<JmixButton> event) {
-        String id = idField.getValue().toString();
-        UiComponentUtils.copyToClipboard(id)
-                .then(successResult -> notifications.create("Номер кошелька скопирован!")
-                                .withPosition(Notification.Position.BOTTOM_END)
-                                .withThemeVariant(NotificationVariant.LUMO_SUCCESS)
-                                .show(),
-                        errorResult -> notifications.create("Не удалось скопировать!")
-                                .withPosition(Notification.Position.BOTTOM_END)
-                                .withThemeVariant(NotificationVariant.LUMO_ERROR)
-                                .show());
-    }
-
-
-
-
-    @Subscribe
-    public void onReady(final ReadyEvent event) {
-        amountField.setValue(walletService.getWalletAmount(getEditedEntity()).toString());
-    }
+  @Subscribe
+  public void onReady(final ReadyEvent event) {
+    amountField.setValue(walletService.getWalletAmount(getEditedEntity()).toString());
+  }
 }

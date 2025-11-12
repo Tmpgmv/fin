@@ -8,18 +8,18 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 public class AuthenticatedAsUser implements BeforeEachCallback, AfterEachCallback {
-    @Override
-    public void beforeEach(ExtensionContext context) {
-        getSystemAuthenticator(context).begin("user"); // authenticate as 'user'
-    }
+  @Override
+  public void beforeEach(ExtensionContext context) {
+    getSystemAuthenticator(context).begin("user"); // authenticate as 'user'
+  }
 
-    @Override
-    public void afterEach(ExtensionContext context) {
-        getSystemAuthenticator(context).end();
-    }
+  @Override
+  public void afterEach(ExtensionContext context) {
+    getSystemAuthenticator(context).end();
+  }
 
-    private SystemAuthenticator getSystemAuthenticator(ExtensionContext context) {
-        ApplicationContext appContext = SpringExtension.getApplicationContext(context);
-        return appContext.getBean(SystemAuthenticator.class);
-    }
+  private SystemAuthenticator getSystemAuthenticator(ExtensionContext context) {
+    ApplicationContext appContext = SpringExtension.getApplicationContext(context);
+    return appContext.getBean(SystemAuthenticator.class);
+  }
 }

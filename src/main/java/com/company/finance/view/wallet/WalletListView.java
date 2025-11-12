@@ -8,24 +8,18 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-
-
 @Route(value = "wallets", layout = MainView.class)
 @ViewController(id = "Wallet.list")
 @ViewDescriptor(path = "wallet-list-view.xml")
 @LookupComponent("walletsDataGrid")
 @DialogMode(width = "64em")
 public class WalletListView extends StandardListView<Wallet> {
-    @ViewComponent
-    private DataGrid<Wallet> walletsDataGrid;
+  @ViewComponent private DataGrid<Wallet> walletsDataGrid;
 
-    @Autowired
-    private WalletService walletService;
+  @Autowired private WalletService walletService;
 
-    @Subscribe
-    public void onInit(InitEvent event) {
-        walletsDataGrid.addColumn(wallet -> walletService.getWalletAmount(wallet))
-                .setHeader("Amount");
-    }
+  @Subscribe
+  public void onInit(InitEvent event) {
+    walletsDataGrid.addColumn(wallet -> walletService.getWalletAmount(wallet)).setHeader("Amount");
+  }
 }
