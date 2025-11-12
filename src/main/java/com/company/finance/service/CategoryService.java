@@ -1,13 +1,11 @@
 package com.company.finance.service;
 
-import com.company.finance.entity.Category;
-import com.company.finance.entity.CategoryGridData;
-import com.company.finance.entity.Operation;
-import com.company.finance.entity.OperationType;
+import com.company.finance.entity.*;
 import io.jmix.core.DataManager;
 import io.jmix.core.FluentLoader;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -27,22 +25,21 @@ public class CategoryService {
     @Autowired
     private UnconstrainedDataManager unconstrainedDataManager;
 
-
+    @Autowired
+    private CurrentAuthentication currentAuthentication;
 
 
     public Map<String, BigDecimal> getLimitLeftover(Category category){
+        User currentUser = (User) currentAuthentication.getUser();
 
         BigDecimal amount = dataManager.loadValue(
-                        "select coalesce(sum(o.amount), 0) from Operation o where o.category = :category",
+                        "select coalesce(sum(o.amount), 0) from Operation o where o.category = :category and o.wallet.user = :user",
                         BigDecimal.class)
                 .parameter("category", category)
+                .parameter("user", currentUser)
                 .one();
 
-        BigDecimal leftover = new BigDecimal(0);
-        if (!category.getLimit().equals(new BigDecimal(0))){
-            leftover = category.getLimit().subtract(amount);
-        }
-
+        BigDecimal leftover = category.getLimit().subtract(amount);
         Map<String, BigDecimal> result = new HashMap<>();
 
         result.put("amount", amount);
@@ -56,9 +53,10 @@ public class CategoryService {
 
 
     public List<CategoryGridData> getCategories(OperationType type, LocalDate from, LocalDate through) {
+        User currentUser = (User) currentAuthentication.getUser();
         StringBuilder query = new StringBuilder(
                 "select o.category, coalesce(o.category.limit, 0), coalesce(sum(o.amount), 0), coalesce(o.category.limit, 0) - coalesce(sum(o.amount), 0) " +
-                        "from Operation o where o.category.type = :type"
+                        "from Operation o where o.category.type = :type and o.wallet.user = :user"
         );
 
         if (from != null && through != null) {
@@ -73,7 +71,8 @@ public class CategoryService {
 
         var loader = unconstrainedDataManager.loadValues(query.toString())
                 .properties("category", "limit", "amount", "leftover")
-                .parameter("type", type.getId());
+                .parameter("type", type.getId())
+                .parameter("user", currentUser);
 
         if (from != null) {
             loader.parameter("from", from);
