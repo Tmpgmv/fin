@@ -14,7 +14,7 @@ public class CategoryGridData {
 
   @JmixProperty(mandatory = true)
   @NotNull
-  private Category category;
+  private String category;
 
   @JmixProperty(mandatory = true)
   @NotNull
@@ -31,7 +31,7 @@ public class CategoryGridData {
   public CategoryGridData(
       Category category, BigDecimal limit, BigDecimal amount, BigDecimal leftover) {
     this.id = UUID.randomUUID();
-    this.category = category;
+    this.category = category.getName();
     this.limit = limit;
     this.amount = amount;
     this.leftover = leftover;
@@ -53,12 +53,12 @@ public class CategoryGridData {
     this.limit = limit;
   }
 
-  public Category getCategory() {
+  public String getCategory() {
     return category;
   }
 
   public void setCategory(Category category) {
-    this.category = category;
+    this.category = category.getName();
   }
 
   public UUID getId() {

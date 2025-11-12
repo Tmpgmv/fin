@@ -25,11 +25,14 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.app.main.StandardMainView;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.download.DownloadFormat;
+import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -67,6 +70,9 @@ public class MainView extends StandardMainView {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private Downloader downloader;
 
   @Install(to = "userMenu", subject = "buttonRenderer")
   private Component userMenuButtonRenderer(final UserDetails userDetails) {
@@ -239,10 +245,17 @@ public class MainView extends StandardMainView {
 
         ReportDto report = new ReportDto(from, through, totalExp, totalInc, categoriesExpense, categoriesIncome);
 
-        String json;
+
+
         try {
-            json = objectMapper.writeValueAsString(report);
-        } catch (Exception e) {
+            String json = objectMapper.writeValueAsString(report);
+            byte[] content = json.getBytes(StandardCharsets.UTF_8);
+            downloader.download(
+                    content,
+                    "report.json",
+                    new DownloadFormat("application/json", "json")
+            );
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             e.printStackTrace();
         }
 
