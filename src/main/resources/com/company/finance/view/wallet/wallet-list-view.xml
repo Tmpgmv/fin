@@ -25,6 +25,7 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
+        <button id="helpButton" icon="vaadin:question-circle"/>
         <genericFilter id="genericFilter"
                        dataLoader="walletsDl">
             <properties include=".*"/>

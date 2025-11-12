@@ -2,13 +2,16 @@ package com.company.finance.view.transfer;
 
 import com.company.finance.entity.*;
 import com.company.finance.view.main.MainView;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -120,5 +123,12 @@ public class TransferDetailView extends StandardDetailView<Transfer> {
   @Subscribe
   public void onBeforeSave(BeforeSaveEvent event) {
     getEditedEntity().setTo(toWallet);
+  }
+
+  @Autowired private ViewNavigators viewNavigators;
+
+  @Subscribe(id = "helpButton", subject = "singleClickListener")
+  public void onButtonClick(final ClickEvent<JmixButton> event) {
+    viewNavigators.view("TransferHelp").navigate();
   }
 }

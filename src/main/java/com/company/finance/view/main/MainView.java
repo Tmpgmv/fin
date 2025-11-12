@@ -2,11 +2,14 @@ package com.company.finance.view.main;
 
 import com.company.finance.entity.CategoryGridData;
 import com.company.finance.entity.OperationType;
+import com.company.finance.entity.ReportDto;
 import com.company.finance.entity.User;
 import com.company.finance.service.CategoryService;
 import com.company.finance.service.OperationService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.avatar.AvatarVariant;
@@ -23,6 +26,7 @@ import io.jmix.flowui.app.main.StandardMainView;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.exception.ValidationException;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
 import java.math.BigDecimal;
@@ -60,6 +64,9 @@ public class MainView extends StandardMainView {
   @ViewComponent private TypedDatePicker fromComponent;
 
   @ViewComponent private TypedDatePicker throughComponent;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
   @Install(to = "userMenu", subject = "buttonRenderer")
   private Component userMenuButtonRenderer(final UserDetails userDetails) {
@@ -215,4 +222,29 @@ public class MainView extends StandardMainView {
       throw new ValidationException("Не может быть раньше, чем \"С\"");
     }
   }
+
+    @Subscribe(id = "exp", subject = "clickListener")
+    public void onExpClick(final ClickEvent<JmixButton> event) {
+        LocalDate from = (LocalDate) fromComponent.getValue();
+        LocalDate through = (LocalDate) throughComponent.getValue();
+
+        BigDecimal totalExp = operationService.geTotal(OperationType.РАСХОД, from, through);
+        List<CategoryGridData> categoriesExpense =
+                categoryService.getCategories(OperationType.РАСХОД, from, through);
+
+        BigDecimal totalInc = operationService.geTotal(OperationType.ПРИХОД, from, through);
+
+        List<CategoryGridData> categoriesIncome =
+                categoryService.getCategories(OperationType.ПРИХОД, from, through);
+
+        ReportDto report = new ReportDto(from, through, totalExp, totalInc, categoriesExpense, categoriesIncome);
+
+        String json;
+        try {
+            json = objectMapper.writeValueAsString(report);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 }

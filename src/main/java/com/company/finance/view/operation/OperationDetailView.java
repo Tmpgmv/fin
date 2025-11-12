@@ -6,12 +6,15 @@ import com.company.finance.entity.Wallet;
 import com.company.finance.service.CategoryService;
 import com.company.finance.service.WalletService;
 import com.company.finance.view.main.MainView;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.DataManager;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import java.math.BigDecimal;
 import java.util.Map;
@@ -83,5 +86,12 @@ public class OperationDetailView extends StandardDetailView<Operation> {
           .withDuration(1000)
           .show();
     }
+  }
+
+  @Autowired private ViewNavigators viewNavigators;
+
+  @Subscribe(id = "helpButton", subject = "singleClickListener")
+  public void onButtonClick(final ClickEvent<JmixButton> event) {
+    viewNavigators.view("OperationHelp").navigate();
   }
 }

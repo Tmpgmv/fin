@@ -7,6 +7,10 @@
         <item view="Transfer.list" title="msg://com.company.finance.view.transfer/transferListView.title"/>
         <item view="Wallet.list" title="msg://com.company.finance.view.wallet/walletListView.title"/>
         <item view="Operation.list" title="msg://com.company.finance.view.operation/operationListView.title"/>
+        <item view="CategoryHelp" title="msg://com.company.finance.view.categoryhelp/categoryHelp.title"/>
+        <item view="TransferHelp" title="msg://com.company.finance.view.transferhelp/transferHelp.title"/>
+        <item view="OperationHelp" title="msg://com.company.finance.view.operationhelp/operationHelp.title"/>
+        <item view="WalletHelp" title="msg://com.company.finance.view.wallethelp/walletHelp.title"/>
     </menu>
 
 </menu-config>

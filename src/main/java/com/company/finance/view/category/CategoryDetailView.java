@@ -4,10 +4,14 @@ import com.company.finance.entity.Category;
 import com.company.finance.entity.OperationType;
 import com.company.finance.view.main.MainView;
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.router.Route;
+import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 @Route(value = "categories/:id", layout = MainView.class)
@@ -15,6 +19,8 @@ import org.springframework.util.Assert;
 @ViewDescriptor(path = "category-detail-view.xml")
 @EditedEntityContainer("categoryDc")
 public class CategoryDetailView extends StandardDetailView<Category> {
+  @Autowired private ViewNavigators viewNavigators;
+
   @ViewComponent private JmixSelect typeField;
 
   @ViewComponent private TypedTextField limitField;
@@ -29,5 +35,10 @@ public class CategoryDetailView extends StandardDetailView<Category> {
       Assert.isTrue(event.getValue().equals(OperationType.РАСХОД), "Должен быть 'Расход'");
       limitField.setEnabled(true);
     }
+  }
+
+  @Subscribe(id = "helpButton", subject = "singleClickListener")
+  public void onButtonClick(final ClickEvent<JmixButton> event) {
+    viewNavigators.view("CategoryHelp").navigate();
   }
 }

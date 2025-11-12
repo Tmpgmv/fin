@@ -9,6 +9,7 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -52,5 +53,12 @@ public class WalletDetailView extends StandardDetailView<Wallet> {
   @Subscribe
   public void onReady(final ReadyEvent event) {
     amountField.setValue(walletService.getWalletAmount(getEditedEntity()).toString());
+  }
+
+  @Autowired private ViewNavigators viewNavigators;
+
+  @Subscribe(id = "helpButton", subject = "singleClickListener")
+  public void onButtonClick(final ClickEvent<JmixButton> event) {
+    viewNavigators.view("WalletHelp").navigate();
   }
 }

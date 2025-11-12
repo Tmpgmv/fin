@@ -17,6 +17,7 @@
         <action id="closeAction" type="detail_close"/>
     </actions>
     <layout>
+        <button id="helpButton" icon="vaadin:question-circle"/>
         <formLayout id="form" dataContainer="categoryDc">
             <responsiveSteps>
                 <responsiveStep minWidth="0" columns="1"/>
@@ -30,5 +31,6 @@
             <button id="saveAndCloseButton" action="saveCloseAction"/>
             <button id="closeButton" action="closeAction"/>
         </hbox>
+
     </layout>
 </view>
