@@ -179,17 +179,35 @@ public class MainView extends StandardMainView {
 
   private void showReport(LocalDate from, LocalDate through) {
     BigDecimal totalExp = operationService.geTotal(OperationType.РАСХОД, from, through);
-    totalExpense.setText(String.format("Общие расходы: %s", totalExp));
+//    totalExpense.setText(String.format("Общие расходы: %s", totalExp));
     List<CategoryGridData> categoriesExpense =
         categoryService.getCategories(OperationType.РАСХОД, from, through);
-    catExpenseDc.setItems(categoriesExpense);
+//    catExpenseDc.setItems(categoriesExpense);
 
     BigDecimal totalInc = operationService.geTotal(OperationType.ПРИХОД, from, through);
-    totalIncome.setText(String.format("Общий доход: %s", totalInc));
+//    totalIncome.setText(String.format("Общий доход: %s", totalInc));
     List<CategoryGridData> categoriesIncome =
         categoryService.getCategories(OperationType.ПРИХОД, from, through);
-    catIncomeDc.setItems(categoriesIncome);
+//    catIncomeDc.setItems(categoriesIncome);
+    showReport(totalExp,
+            categoriesExpense,
+            totalInc,
+            categoriesIncome);
   }
+
+    private void showReport(
+                            BigDecimal totalExp,
+                            List<CategoryGridData> categoriesExpense,
+                            BigDecimal totalInc,
+                            List<CategoryGridData> categoriesIncome
+                            ) {
+        totalIncome.setText(String.format("Общий доход: %s", totalInc));
+        totalExpense.setText(String.format("Общие расходы: %s", totalExp));
+        catExpenseDc.setItems(categoriesExpense);
+        catIncomeDc.setItems(categoriesIncome);
+    }
+
+
 
   @Supply(to = "catExpenseDataGrid.leftover", subject = "renderer")
   protected Renderer<CategoryGridData> limitColumnRenderer() {
@@ -280,7 +298,7 @@ public class MainView extends StandardMainView {
         try {
             // Parse the JSON content into your ReportDto class
             ReportDto report = objectMapper.readValue(content, ReportDto.class);
-
+            showReportDto(report);
             // Now you can work with the parsed report object
             System.out.println("Report loaded: " + report);
 
@@ -298,5 +316,14 @@ public class MainView extends StandardMainView {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void showReportDto(ReportDto report){
+      fromComponent.setValue(report.getFrom());
+      throughComponent.setValue(report.getThrough());
+        showReport(report.getTotalExpense(),
+                report.getCategoriesExpense(),
+                report.getTotalIncome(),
+                report.getCategoriesExpense());
     }
 }
