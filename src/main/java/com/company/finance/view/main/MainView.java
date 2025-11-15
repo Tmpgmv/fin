@@ -18,7 +18,6 @@ import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.avatar.AvatarVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Section;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -39,7 +38,6 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -55,8 +53,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @ViewController(id = "MainView")
 @ViewDescriptor(path = "main-view.xml")
 public class MainView extends StandardMainView {
-    @Autowired
-    private Notifications notifications;
+  @Autowired private Notifications notifications;
   @Autowired private Messages messages;
   @Autowired private UiComponents uiComponents;
   @Autowired private CurrentUserSubstitution currentUserSubstitution;
@@ -79,14 +76,11 @@ public class MainView extends StandardMainView {
 
   @ViewComponent private TypedDatePicker throughComponent;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-    @Autowired
-    private Downloader downloader;
+  @Autowired private Downloader downloader;
 
-    @ViewComponent
-    private FileUploadField fileUploadField;
+  @ViewComponent private FileUploadField fileUploadField;
 
   @Install(to = "userMenu", subject = "buttonRenderer")
   private Component userMenuButtonRenderer(final UserDetails userDetails) {
@@ -182,35 +176,28 @@ public class MainView extends StandardMainView {
 
   private void showReport(LocalDate from, LocalDate through) {
     BigDecimal totalExp = operationService.geTotal(OperationType.РАСХОД, from, through);
-//    totalExpense.setText(String.format("Общие расходы: %s", totalExp));
+
     List<CategoryGridData> categoriesExpense =
         categoryService.getCategories(OperationType.РАСХОД, from, through);
-//    catExpenseDc.setItems(categoriesExpense);
 
     BigDecimal totalInc = operationService.geTotal(OperationType.ПРИХОД, from, through);
-//    totalIncome.setText(String.format("Общий доход: %s", totalInc));
+
     List<CategoryGridData> categoriesIncome =
         categoryService.getCategories(OperationType.ПРИХОД, from, through);
-//    catIncomeDc.setItems(categoriesIncome);
-    showReport(totalExp,
-            categoriesExpense,
-            totalInc,
-            categoriesIncome);
+
+    showReport(totalExp, categoriesExpense, totalInc, categoriesIncome);
   }
 
-    private void showReport(
-                            BigDecimal totalExp,
-                            List<CategoryGridData> categoriesExpense,
-                            BigDecimal totalInc,
-                            List<CategoryGridData> categoriesIncome
-                            ) {
-        totalIncome.setText(String.format("Общий доход: %s", totalInc));
-        totalExpense.setText(String.format("Общие расходы: %s", totalExp));
-        catExpenseDc.setItems(categoriesExpense);
-        catIncomeDc.setItems(categoriesIncome);
-    }
-
-
+  private void showReport(
+      BigDecimal totalExp,
+      List<CategoryGridData> categoriesExpense,
+      BigDecimal totalInc,
+      List<CategoryGridData> categoriesIncome) {
+    totalIncome.setText(String.format("Общий доход: %s", totalInc));
+    totalExpense.setText(String.format("Общие расходы: %s", totalExp));
+    catExpenseDc.setItems(categoriesExpense);
+    catIncomeDc.setItems(categoriesIncome);
+  }
 
   @Supply(to = "catExpenseDataGrid.leftover", subject = "renderer")
   protected Renderer<CategoryGridData> limitColumnRenderer() {
@@ -257,94 +244,86 @@ public class MainView extends StandardMainView {
     LocalDate through =
         Instant.ofEpochMilli(val.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
     if (through.isBefore(from)) {
-        throw new ValidationException("\"По\" Не может быть раньше, чем \"С\"");
+      throw new ValidationException("\"По\" Не может быть раньше, чем \"С\"");
     }
   }
 
-    @Install(to = "fromComponent", subject = "validator")
-    private void fromComponentValidator(final Comparable value) {
-        LocalDate through = (LocalDate) throughComponent.getValue();
+  @Install(to = "fromComponent", subject = "validator")
+  private void fromComponentValidator(final Comparable value) {
+    LocalDate through = (LocalDate) throughComponent.getValue();
 
-        if (through == null) {
-            return;
-        }
-
-        Date val = (Date) value;
-        LocalDate from =
-                Instant.ofEpochMilli(val.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
-        if (through.isBefore(from)) {
-            throw new ValidationException("\"По\" Не может быть раньше, чем \"С\"");
-        }
-
+    if (through == null) {
+      return;
     }
 
-    @Subscribe(id = "exp", subject = "clickListener")
-    public void onExpClick(final ClickEvent<JmixButton> event) {
-        LocalDate from = (LocalDate) fromComponent.getValue();
-        LocalDate through = (LocalDate) throughComponent.getValue();
-
-        BigDecimal totalExp = operationService.geTotal(OperationType.РАСХОД, from, through);
-        List<CategoryGridData> categoriesExpense =
-                categoryService.getCategories(OperationType.РАСХОД, from, through);
-
-        BigDecimal totalInc = operationService.geTotal(OperationType.ПРИХОД, from, through);
-
-        List<CategoryGridData> categoriesIncome =
-                categoryService.getCategories(OperationType.ПРИХОД, from, through);
-
-        ReportDto report = new ReportDto(from, through, totalExp, totalInc, categoriesExpense, categoriesIncome);
-
-
-
-        try {
-            String json = objectMapper.writeValueAsString(report);
-            byte[] content = json.getBytes(StandardCharsets.UTF_8);
-            downloader.download(
-                    content,
-                    "report.json",
-                    new DownloadFormat("application/json", "json")
-            );
-        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
+    Date val = (Date) value;
+    LocalDate from =
+        Instant.ofEpochMilli(val.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+    if (through.isBefore(from)) {
+      throw new ValidationException("\"По\" Не может быть раньше, чем \"С\"");
     }
+  }
 
-    @Subscribe("fileUploadField")
-    public void onFileUploadFieldFileUploadSucceeded(FileUploadSucceededEvent<FileUploadField> event) {
-        String fileName = event.getFileName();
-        byte[] content = event.getSource().getValue();
+  @Subscribe(id = "exp", subject = "clickListener")
+  public void onExpClick(final ClickEvent<JmixButton> event) {
+    LocalDate from = (LocalDate) fromComponent.getValue();
+    LocalDate through = (LocalDate) throughComponent.getValue();
 
-        try {
-            // Parse the JSON content into your ReportDto class
-            ReportDto report = objectMapper.readValue(content, ReportDto.class);
-            showReportDto(report);
-            notifications.create("Success!")
-                    .withType(Notifications.Type.SUCCESS)
-                    .withPosition(Notification.Position.BOTTOM_END)
-                    .show();
+    BigDecimal totalExp = operationService.geTotal(OperationType.РАСХОД, from, through);
+    List<CategoryGridData> categoriesExpense =
+        categoryService.getCategories(OperationType.РАСХОД, from, through);
 
-        } catch (StreamReadException e) {
-            e.printStackTrace();
-        }
-        catch (MismatchedInputException e) {
-            // Handle parsing errors
-            e.printStackTrace();
-        } catch (DatabindException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    BigDecimal totalInc = operationService.geTotal(OperationType.ПРИХОД, from, through);
+
+    List<CategoryGridData> categoriesIncome =
+        categoryService.getCategories(OperationType.ПРИХОД, from, through);
+
+    ReportDto report =
+        new ReportDto(from, through, totalExp, totalInc, categoriesExpense, categoriesIncome);
+
+    try {
+      String json = objectMapper.writeValueAsString(report);
+      byte[] content = json.getBytes(StandardCharsets.UTF_8);
+      downloader.download(content, "report.json", new DownloadFormat("application/json", "json"));
+    } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+      e.printStackTrace();
     }
+  }
 
-    private void showReportDto(ReportDto report){
-      fromComponent.setValue(report.getFrom());
-      throughComponent.setValue(report.getThrough());
-        showReport(report.getTotalExpense(),
-                report.getCategoriesExpense(),
-                report.getTotalIncome(),
-                report.getCategoriesExpense());
+  @Subscribe("fileUploadField")
+  public void onFileUploadFieldFileUploadSucceeded(
+      FileUploadSucceededEvent<FileUploadField> event) {
+    String fileName = event.getFileName();
+    byte[] content = event.getSource().getValue();
+
+    try {
+
+      ReportDto report = objectMapper.readValue(content, ReportDto.class);
+      showReportDto(report);
+      notifications
+          .create("Success!")
+          .withType(Notifications.Type.SUCCESS)
+          .withPosition(Notification.Position.BOTTOM_END)
+          .show();
+
+    } catch (StreamReadException e) {
+      e.printStackTrace();
+    } catch (MismatchedInputException e) {
+      e.printStackTrace();
+    } catch (DatabindException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
+  }
 
-
+  private void showReportDto(ReportDto report) {
+    fromComponent.setValue(report.getFrom());
+    throughComponent.setValue(report.getThrough());
+    showReport(
+        report.getTotalExpense(),
+        report.getCategoriesExpense(),
+        report.getTotalIncome(),
+        report.getCategoriesExpense());
+  }
 }

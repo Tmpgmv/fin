@@ -88,6 +88,9 @@
                     <column property="category"/>
                     <column property="amount"/>
                 </columns>
+                <emptyStateComponent>
+                    <h3 text="Нет данных по доходам."/>
+                </emptyStateComponent>
             </dataGrid>
 
 
@@ -100,6 +103,9 @@
                     <column property="amount"/>
                     <column property="leftover" key="leftover"/>
                 </columns>
+                <emptyStateComponent>
+                    <h3 text="Нет данных по расходам."/>
+                </emptyStateComponent>
             </dataGrid>
 
             <!--

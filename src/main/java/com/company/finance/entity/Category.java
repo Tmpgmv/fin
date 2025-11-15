@@ -32,19 +32,19 @@ public class Category {
   @Id
   private UUID id;
 
-@JsonCreator
-public static Category fromString(String value) {
+  @JsonCreator
+  public static Category fromString(String value) {
     return new Category(value);
-}
-    public Category() {
-        // JPA-required default constructor
-    }
+  }
 
-    @JsonCreator
-    public Category(String name) {
-        this.name = name;
-    }
+  public Category() {
+    // JPA-required default constructor
+  }
 
+  @JsonCreator
+  public Category(String name) {
+    this.name = name;
+  }
 
   @Positive
   @Column(name = "LIMIT_", precision = 19, scale = 2)
