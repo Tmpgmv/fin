@@ -6,7 +6,10 @@ import com.company.finance.entity.ReportDto;
 import com.company.finance.entity.User;
 import com.company.finance.service.CategoryService;
 import com.company.finance.service.OperationService;
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
@@ -15,6 +18,7 @@ import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.avatar.AvatarVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Section;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -25,12 +29,16 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.app.main.StandardMainView;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.download.Downloader;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -73,6 +81,9 @@ public class MainView extends StandardMainView {
 
     @Autowired
     private Downloader downloader;
+
+    @ViewComponent
+    private FileUploadField fileUploadField;
 
   @Install(to = "userMenu", subject = "buttonRenderer")
   private Component userMenuButtonRenderer(final UserDetails userDetails) {
@@ -259,5 +270,33 @@ public class MainView extends StandardMainView {
             e.printStackTrace();
         }
 
+    }
+
+    @Subscribe("fileUploadField")
+    public void onFileUploadFieldFileUploadSucceeded(FileUploadSucceededEvent<FileUploadField> event) {
+        String fileName = event.getFileName();
+        byte[] content = event.getSource().getValue();
+
+        try {
+            // Parse the JSON content into your ReportDto class
+            ReportDto report = objectMapper.readValue(content, ReportDto.class);
+
+            // Now you can work with the parsed report object
+            System.out.println("Report loaded: " + report);
+
+            // For UI feedback, you may use a notification (if needed)
+            // notifications.create("Report uploaded successfully").show();
+
+        } catch (StreamReadException e) {
+            e.printStackTrace();
+        }
+        catch (MismatchedInputException e) {
+            // Handle parsing errors
+            e.printStackTrace();
+        } catch (DatabindException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

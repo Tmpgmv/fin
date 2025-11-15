@@ -1,5 +1,7 @@
 package com.company.finance.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
@@ -29,6 +31,17 @@ public class Category {
   @Column(name = "ID", nullable = false)
   @Id
   private UUID id;
+
+@JsonCreator
+public static Category fromString(String value) {
+    return new Category(value);
+}
+
+    @JsonCreator
+    public Category(String name) {
+        this.name = name;
+    }
+
 
   @Positive
   @Column(name = "LIMIT_", precision = 19, scale = 2)
@@ -74,6 +87,7 @@ public class Category {
     this.limit = limit;
   }
 
+  @JsonValue
   public String getName() {
     return name;
   }

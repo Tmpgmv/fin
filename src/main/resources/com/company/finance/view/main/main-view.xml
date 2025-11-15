@@ -57,13 +57,18 @@
             <div classNames="jmix-initial-layout-content">
                 <h1 text="msg://applicationTitle.text"
                     classNames="jmix-initial-layout-title"/>
-                <image resource="public/images/logo.png"
-                       classNames="jmix-initial-layout-logo"/>
             </div>
 
             <hbox>
+                <image resource="public/images/logo.png"
+                       classNames="jmix-initial-layout-logo"/>
                 <button id="exp" icon="lumo:download" title="Экспорт"/>
-                <button id="imp" icon="lumo:upload" title="Импорт"/>
+
+                <fileUploadField id="fileUploadField"
+                                 clearButtonVisible="true"
+                                 acceptedFileTypes=".json"
+                                 maxFileSize="10485760"
+                                 uploadIcon="lumo:upload" dropAllowed="true" fileNameVisible="true"/>
             </hbox>
             <hbox>
                 <span text="С: "/>

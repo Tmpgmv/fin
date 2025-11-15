@@ -20,6 +20,9 @@ public class ReportDto {
         private BigDecimal totalIncome;
         private List<CategoryGridData> categoriesExpense;
 
+        public ReportDto() {
+            // Required by Jackson for deserialization
+        }
         /**
          * DTO for a report.
          * @param from
@@ -37,6 +40,7 @@ public class ReportDto {
             this.categoriesExpense = categoriesExpense;
             this.categoriesIncome = categoriesIncome;
         }
+
 
         private List<CategoryGridData> categoriesIncome;
 
