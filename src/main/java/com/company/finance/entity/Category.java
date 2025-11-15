@@ -36,6 +36,9 @@ public class Category {
 public static Category fromString(String value) {
     return new Category(value);
 }
+    public Category() {
+        // JPA-required default constructor
+    }
 
     @JsonCreator
     public Category(String name) {
