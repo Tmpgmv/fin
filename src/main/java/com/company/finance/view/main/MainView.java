@@ -20,11 +20,13 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Section;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.Messages;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.app.main.StandardMainView;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
@@ -53,7 +55,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @ViewController(id = "MainView")
 @ViewDescriptor(path = "main-view.xml")
 public class MainView extends StandardMainView {
-
+    @Autowired
+    private Notifications notifications;
   @Autowired private Messages messages;
   @Autowired private UiComponents uiComponents;
   @Autowired private CurrentUserSubstitution currentUserSubstitution;
@@ -254,9 +257,26 @@ public class MainView extends StandardMainView {
     LocalDate through =
         Instant.ofEpochMilli(val.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
     if (through.isBefore(from)) {
-      throw new ValidationException("Не может быть раньше, чем \"С\"");
+        throw new ValidationException("\"По\" Не может быть раньше, чем \"С\"");
     }
   }
+
+    @Install(to = "fromComponent", subject = "validator")
+    private void fromComponentValidator(final Comparable value) {
+        LocalDate through = (LocalDate) throughComponent.getValue();
+
+        if (through == null) {
+            return;
+        }
+
+        Date val = (Date) value;
+        LocalDate from =
+                Instant.ofEpochMilli(val.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+        if (through.isBefore(from)) {
+            throw new ValidationException("\"По\" Не может быть раньше, чем \"С\"");
+        }
+
+    }
 
     @Subscribe(id = "exp", subject = "clickListener")
     public void onExpClick(final ClickEvent<JmixButton> event) {
@@ -299,11 +319,10 @@ public class MainView extends StandardMainView {
             // Parse the JSON content into your ReportDto class
             ReportDto report = objectMapper.readValue(content, ReportDto.class);
             showReportDto(report);
-            // Now you can work with the parsed report object
-            System.out.println("Report loaded: " + report);
-
-            // For UI feedback, you may use a notification (if needed)
-            // notifications.create("Report uploaded successfully").show();
+            notifications.create("Success!")
+                    .withType(Notifications.Type.SUCCESS)
+                    .withPosition(Notification.Position.BOTTOM_END)
+                    .show();
 
         } catch (StreamReadException e) {
             e.printStackTrace();
@@ -326,4 +345,6 @@ public class MainView extends StandardMainView {
                 report.getTotalIncome(),
                 report.getCategoriesExpense());
     }
+
+
 }
