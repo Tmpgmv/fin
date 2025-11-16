@@ -41,38 +41,42 @@ public class OperationDetailView extends StandardDetailView<Operation> {
 
   @Install(to = "amountField", subject = "validator")
   private void amountFieldValidator(final BigDecimal value) {
-
-    if (getEditedEntity().getCategory() == null) {
+    if (getEditedEntity().getCategory() == null
+        || getEditedEntity().getCategory().getType() == OperationType.ПРИХОД) {
       return;
     }
-
-    if (getEditedEntity().getCategory().getType() == OperationType.ПРИХОД) {
-      return;
-    }
-
     Map<String, BigDecimal> categoryTotal =
         categoryService.getLimitLeftover(getEditedEntity().getCategory());
-
-    BigDecimal canSpendForCategory =
-        categoryTotal.get("leftover").compareTo(new BigDecimal(0)) > 0
-            ? categoryTotal.get("leftover")
-            : new BigDecimal(0);
-
+    BigDecimal canSpendForCategory = null;
+    if (categoryTotal != null) {
+      canSpendForCategory =
+          categoryTotal.get("leftover").compareTo(new BigDecimal(0)) > 0
+              ? categoryTotal.get("leftover")
+              : new BigDecimal(0);
+    }
     if (getEditedEntity().getCategory().getType() == OperationType.РАСХОД
         && getEditedEntity().getCategory().getLimit() != null) {
-      if (value.compareTo(categoryTotal.get("leftover")) < 0) {
+      if (value.compareTo(canSpendForCategory) < 0) {
         notifications
             .create("Платеж в пределах лимита.")
             .withType(Notifications.Type.WARNING)
             .withPosition(Notification.Position.BOTTOM_END)
             .withDuration(1000)
             .show();
-      } else if (value.compareTo(categoryTotal.get("leftover")) > 0) {
+      } else if (value.compareTo(canSpendForCategory) > 0) {
         notifications
             .create(
                 String.format(
-                    "Перерасход лимита по категории. Можно потратить %s руб.", canSpendForCategory))
+                    "Перерасход лимита по категории. " + "Можно потратить %s руб.",
+                    canSpendForCategory))
             .withType(Notifications.Type.ERROR)
+            .withPosition(Notification.Position.BOTTOM_END)
+            .withDuration(1000)
+            .show();
+      } else {
+        notifications
+            .create("При проведении операции бюджет " + "на категорию будет исчерпан.")
+            .withType(Notifications.Type.WARNING)
             .withPosition(Notification.Position.BOTTOM_END)
             .withDuration(1000)
             .show();

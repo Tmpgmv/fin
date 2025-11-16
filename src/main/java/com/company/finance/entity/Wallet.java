@@ -1,6 +1,8 @@
 package com.company.finance.entity;
 
+import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
@@ -11,9 +13,7 @@ import java.util.UUID;
 import org.springframework.data.annotation.CreatedBy;
 
 @JmixEntity
-@Table(
-    name = "WALLET",
-    indexes = {@Index(name = "IDX_WALLET_", columnList = "")})
+@Table(name = "WALLET")
 @Entity
 public class Wallet {
   @JmixGeneratedValue
@@ -29,7 +29,6 @@ public class Wallet {
 
   @NotEmpty
   @NotBlank
-  @InstanceName
   @Column(name = "NAME", nullable = false)
   @NotNull
   private String name;
@@ -68,5 +67,11 @@ public class Wallet {
 
   public void setId(UUID id) {
     this.id = id;
+  }
+
+  @InstanceName
+  @DependsOnProperties({"id"})
+  public String getInstanceName(MetadataTools metadataTools) {
+    return metadataTools.format(id);
   }
 }
