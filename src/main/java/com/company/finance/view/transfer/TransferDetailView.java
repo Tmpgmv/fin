@@ -1,8 +1,10 @@
 package com.company.finance.view.transfer;
 
 import com.company.finance.entity.*;
+import com.company.finance.service.WalletService;
 import com.company.finance.view.main.MainView;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.DataManager;
@@ -15,6 +17,7 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,12 +41,18 @@ public class TransferDetailView extends StandardDetailView<Transfer> {
 
   @Autowired private Metadata metadata;
 
+  @Autowired private WalletService walletService;
+
   private Wallet toWallet;
 
   @Autowired private Notifications notifications;
+  @Autowired private ViewNavigators viewNavigators;
 
   @Install(to = "toField", subject = "validator")
   private void toFieldValidator(String uuid) {
+    if (uuid == null) {
+      return;
+    }
     uuid = uuid.strip();
     if (uuid.isEmpty()) {
       throw new ValidationException("Заполните это поле.");
@@ -125,10 +134,36 @@ public class TransferDetailView extends StandardDetailView<Transfer> {
     getEditedEntity().setTo(toWallet);
   }
 
-  @Autowired private ViewNavigators viewNavigators;
-
   @Subscribe(id = "helpButton", subject = "singleClickListener")
   public void onButtonClick(final ClickEvent<JmixButton> event) {
     viewNavigators.view("TransferHelp").navigate();
+  }
+
+  @Install(to = "fromField", subject = "validator")
+  private void fromFieldValidator(final Wallet value) {
+    if (walletService.getWalletAmount(value).compareTo(new BigDecimal(0)) <= 0) {
+      throw new ValidationException("В кошельке нет денег.");
+    }
+
+    BigDecimal amount = new BigDecimal(0);
+    if (!amountField.getValue().equals("")) {
+      amount = new BigDecimal(amountField.getValue().replaceAll(",", ".").replaceAll(" ", ""));
+    }
+
+    if (walletService.getWalletAmount(value).compareTo(amount) < 0) {
+      throw new ValidationException(
+          String.format(
+              "В кошельке не хватает средств. Доступно %s руб.",
+              walletService.getWalletAmount(value)));
+    }
+
+    if (walletService.getWalletAmount(value).compareTo(amount) == 0) {
+      notifications
+          .create("В кошельке после операции не останется средств")
+          .withType(Notifications.Type.WARNING)
+          .withPosition(Notification.Position.BOTTOM_END)
+          .withDuration(3000)
+          .show();
+    }
   }
 }

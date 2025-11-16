@@ -2,7 +2,11 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://transferHelp.title">
     <layout>
+
         <h1 text="Переводы между кошельками"/>
+
+        <div text="Перевод между кошельками создает две операции: приход у получателя и расход у отправителя.">
+        </div>
 
     </layout>
 </view>

@@ -66,7 +66,7 @@ public class Operation {
   @JmixProperty
   @DependsOnProperties({"category"})
   public OperationType getType() {
-    return category.getType();
+    return category == null ? null : category.getType();
   }
 
   public String getComment() {

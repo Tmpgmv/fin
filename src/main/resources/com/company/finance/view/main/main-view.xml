@@ -53,7 +53,6 @@
         <initialLayout id="initialLayout" classNames="jmix-initial-layout">
 
 
-
             <div classNames="jmix-initial-layout-content">
                 <h1 text="msg://applicationTitle.text"
                     classNames="jmix-initial-layout-title"/>

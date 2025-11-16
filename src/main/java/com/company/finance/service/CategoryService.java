@@ -26,6 +26,9 @@ public class CategoryService {
   @Autowired private CurrentAuthentication currentAuthentication;
 
   public Map<String, BigDecimal> getLimitLeftover(Category category) {
+    if (category.getType() == OperationType.ПРИХОД || category.getLimit() == null) {
+      return null;
+    }
     User currentUser = (User) currentAuthentication.getUser();
 
     BigDecimal amount =

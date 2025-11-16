@@ -11,6 +11,7 @@ public class ReportDto {
   private BigDecimal totalExpense;
   private BigDecimal totalIncome;
   private List<CategoryGridData> categoriesExpense;
+  private List<CategoryGridData> categoriesIncome;
 
   public ReportDto() {
     // Required by Jackson for deserialization
@@ -40,8 +41,6 @@ public class ReportDto {
     this.categoriesExpense = categoriesExpense;
     this.categoriesIncome = categoriesIncome;
   }
-
-  private List<CategoryGridData> categoriesIncome;
 
   public LocalDate getFrom() {
     return from;

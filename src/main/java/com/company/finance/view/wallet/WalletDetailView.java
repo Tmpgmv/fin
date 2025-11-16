@@ -30,6 +30,7 @@ public class WalletDetailView extends StandardDetailView<Wallet> {
 
   @Autowired private WalletService walletService;
   @ViewComponent private TypedTextField<Object> amountField;
+  @Autowired private ViewNavigators viewNavigators;
 
   @Subscribe(id = "copyIdButton", subject = "clickListener")
   public void onCopyIdButtonClick(final ClickEvent<JmixButton> event) {
@@ -54,8 +55,6 @@ public class WalletDetailView extends StandardDetailView<Wallet> {
   public void onReady(final ReadyEvent event) {
     amountField.setValue(walletService.getWalletAmount(getEditedEntity()).toString());
   }
-
-  @Autowired private ViewNavigators viewNavigators;
 
   @Subscribe(id = "helpButton", subject = "singleClickListener")
   public void onButtonClick(final ClickEvent<JmixButton> event) {

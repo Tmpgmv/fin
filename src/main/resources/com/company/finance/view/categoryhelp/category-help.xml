@@ -2,7 +2,9 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://categoryHelp.title">
     <layout>
-        <h1 text="Работа с категориями"/>
 
+        <h1 text="Работа с категориями"/>
+        <div text='Для каждого кошелька обязательно создайте две категории: "Перевод между кошельками" с типами "Приход" и "Расход". '>
+        </div>
     </layout>
 </view>

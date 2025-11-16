@@ -108,7 +108,7 @@ class LoginViewUiTest {
     Transfer transfer =
         dataManager
             .load(Transfer.class)
-            .id(UUID.fromString("019a6a2a-e94d-72da-b1a6-001e22935374"))
+            .id(UUID.fromString("019a8bca-f3cc-7c93-8fe6-3e9d58691dd8"))
             .optional()
             .orElseThrow(() -> new IllegalStateException("Test Transfer not found"));
 

@@ -257,6 +257,11 @@ public class MainView extends StandardMainView {
     }
 
     Date val = (Date) value;
+
+    if (val == null) {
+      return;
+    }
+
     LocalDate from =
         Instant.ofEpochMilli(val.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
     if (through.isBefore(from)) {
@@ -301,7 +306,7 @@ public class MainView extends StandardMainView {
       ReportDto report = objectMapper.readValue(content, ReportDto.class);
       showReportDto(report);
       notifications
-          .create("Success!")
+          .create("Данные загружены!")
           .withType(Notifications.Type.SUCCESS)
           .withPosition(Notification.Position.BOTTOM_END)
           .show();
@@ -324,6 +329,6 @@ public class MainView extends StandardMainView {
         report.getTotalExpense(),
         report.getCategoriesExpense(),
         report.getTotalIncome(),
-        report.getCategoriesExpense());
+        report.getCategoriesIncome());
   }
 }

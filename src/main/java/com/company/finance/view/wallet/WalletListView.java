@@ -20,13 +20,12 @@ public class WalletListView extends StandardListView<Wallet> {
   @ViewComponent private DataGrid<Wallet> walletsDataGrid;
 
   @Autowired private WalletService walletService;
+  @Autowired private ViewNavigators viewNavigators;
 
   @Subscribe
   public void onInit(InitEvent event) {
     walletsDataGrid.addColumn(wallet -> walletService.getWalletAmount(wallet)).setHeader("Amount");
   }
-
-  @Autowired private ViewNavigators viewNavigators;
 
   @Subscribe(id = "helpButton", subject = "singleClickListener")
   public void onButtonClick(final ClickEvent<JmixButton> event) {

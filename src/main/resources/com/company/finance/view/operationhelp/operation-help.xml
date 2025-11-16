@@ -2,7 +2,11 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://operationHelp.title">
     <layout>
+
         <h1 text="Операции"/>
+
+        <div text="Приход и расход.">
+        </div>
 
     </layout>
 </view>

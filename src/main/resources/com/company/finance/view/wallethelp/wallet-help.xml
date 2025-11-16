@@ -2,7 +2,12 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://walletHelp.title">
     <layout>
+
+
         <h1 text="Работа с кошельком"/>
+
+        <div text="Откройте кошелек. И нажмите пиктограмму блокнота, чтобы скопировать идентификатор кошелька.">
+        </div>
 
     </layout>
 </view>

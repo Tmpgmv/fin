@@ -32,23 +32,9 @@ public class Category {
   @Id
   private UUID id;
 
-  @JsonCreator
-  public static Category fromString(String value) {
-    return new Category(value);
-  }
-
-  public Category() {
-    // JPA-required default constructor
-  }
-
-  @JsonCreator
-  public Category(String name) {
-    this.name = name;
-  }
-
   @Positive
   @Column(name = "LIMIT_", precision = 19, scale = 2)
-  private BigDecimal limit;
+  private BigDecimal limit = null;
 
   @Column(name = "TYPE_", nullable = false)
   @NotNull
@@ -65,6 +51,20 @@ public class Category {
   @NotNull
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   private User user;
+
+  public Category() {
+    // JPA-required default constructor
+  }
+
+  @JsonCreator
+  public Category(String name) {
+    this.name = name;
+  }
+
+  @JsonCreator
+  public static Category fromString(String value) {
+    return new Category(value);
+  }
 
   public User getUser() {
     return user;
@@ -83,7 +83,7 @@ public class Category {
   }
 
   public BigDecimal getLimit() {
-    return limit == null ? new BigDecimal(0) : limit;
+    return limit;
   }
 
   public void setLimit(BigDecimal limit) {

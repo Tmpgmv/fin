@@ -41,17 +41,7 @@ public interface UserRole {
   @EntityPolicy(entityClass = Wallet.class, actions = EntityPolicyAction.ALL)
   void wallet();
 
-  @MenuPolicy(
-      menuIds = {
-        "Category.list",
-        "Transfer.list",
-        "Wallet.list",
-        "Operation.list",
-        "CategoryHelp",
-        "TransferHelp",
-        "OperationHelp",
-        "WalletHelp"
-      })
+  @MenuPolicy(menuIds = {"Category.list", "Transfer.list", "Wallet.list", "Operation.list"})
   @ViewPolicy(
       viewIds = {
         "Category.list",
