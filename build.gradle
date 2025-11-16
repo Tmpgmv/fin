@@ -82,6 +82,7 @@ spotless {
     }
 }
 
+
 checkstyle {
     toolVersion = '10.12.3'  // latest stable as of 2025
     configFile = rootProject.file('config/checkstyle/checkstyle.xml')
